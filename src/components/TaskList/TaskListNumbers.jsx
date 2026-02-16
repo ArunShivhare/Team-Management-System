@@ -8,50 +8,79 @@ const TaskListNumbers = ({ data }) => {
     failed: 0,
   }
 
+  const cards = [
+    {
+      label: "New Tasks",
+      value: taskCounts.newTask,
+      color: "from-blue-500 to-indigo-500",
+      bg: "bg-blue-50"
+    },
+    {
+      label: "In Progress",
+      value: taskCounts.active,
+      color: "from-purple-500 to-indigo-500",
+      bg: "bg-purple-50"
+    },
+    {
+      label: "Completed",
+      value: taskCounts.completed,
+      color: "from-green-500 to-emerald-500",
+      bg: "bg-green-50"
+    },
+    {
+      label: "Failed",
+      value: taskCounts.failed,
+      color: "from-red-500 to-rose-500",
+      bg: "bg-red-50"
+    },
+  ]
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-10 px-4">
+    <section className="mt-10 px-4">
 
-      {/* New Tasks */}
-      <div className="bg-white border rounded-2xl p-6 shadow-sm hover:shadow-md transition">
-        <h2 className="text-4xl font-extrabold text-gray-900">
-          {taskCounts.newTask}
+      {/* Section title */}
+      <div className="mb-6">
+        <h2 className="text-xl font-semibold tracking-tight">
+          Task Overview
         </h2>
-        <p className="text-sm text-gray-500 mt-2">
-          New Tasks
+        <p className="text-sm muted">
+          Summary of your task performance
         </p>
       </div>
 
-      {/* In Progress */}
-      <div className="bg-white border rounded-2xl p-6 shadow-sm hover:shadow-md transition">
-        <h2 className="text-4xl font-extrabold text-gray-900">
-          {taskCounts.active}
-        </h2>
-        <p className="text-sm text-gray-500 mt-2">
-          In Progress
-        </p>
-      </div>
+      {/* Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
-      {/* Completed */}
-      <div className="bg-white border rounded-2xl p-6 shadow-sm hover:shadow-md transition">
-        <h2 className="text-4xl font-extrabold text-gray-900">
-          {taskCounts.completed}
-        </h2>
-        <p className="text-sm text-gray-500 mt-2">
-          Completed
-        </p>
-      </div>
+        {cards.map((card, i) => (
+          <div
+            key={i}
+            className="
+            relative overflow-hidden
+            bg-white border rounded-2xl p-6
+            shadow-sm hover:shadow-md
+            transition duration-300
+            hover:-translate-y-1
+            "
+          >
+            {/* Glow Accent */}
+            <div className={`absolute top-0 left-0 w-full h-1 bg-linear-to-r ${card.color}`} />
 
-      {/* Failed */}
-      <div className="bg-white border rounded-2xl p-6 shadow-sm hover:shadow-md transition">
-        <h2 className="text-4xl font-extrabold text-gray-900">
-          {taskCounts.failed}
-        </h2>
-        <p className="text-sm text-gray-500 mt-2">
-          Failed
-        </p>
-      </div>
+            {/* Content */}
+            <h2 className="text-4xl font-bold tracking-tight">
+              {card.value}
+            </h2>
 
-    </div>
+            <p className="text-sm muted mt-2">
+              {card.label}
+            </p>
+
+            {/* Soft background circle */}
+            <div className={`absolute -right-6 -bottom-6 w-24 h-24 rounded-full opacity-40 ${card.bg}`} />
+          </div>
+        ))}
+
+      </div>
+    </section>
   )
 }
 

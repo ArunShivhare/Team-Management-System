@@ -11,26 +11,40 @@ const Header = ({ changeUser, data }) => {
   }
 
   return (
-    <header className="w-full bg-white border-b sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 py-10 flex items-center justify-between">
+    <header className="sticky top-0 z-50 backdrop-blur-md bg-white/70 border-b">
+      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
 
-        {/* Left: Big Greeting */}
-        <div>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
-            Hello, {username} 👋
-          </h1>
-          <p className="text-base md:text-lg text-gray-500 mt-2">
-            Welcome back to <span className="font-medium">EMP</span>
-          </p>
+        {/* Left Section */}
+        <div className="flex items-center gap-4">
+
+          {/* Logo */}
+          <div className="p-3 rounded-xl bg-linear-to-br from-purple-600 to-blue-500 shadow-md">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+              <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+            </svg>
+          </div>
+
+          {/* Greeting */}
+          <div>
+            <h1 className="text-xl md:text-2xl font-semibold">
+              Hello, <span className="bg-linear-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">{username}</span>
+            </h1>
+            <p className="text-sm text-gray-500 mt-1">
+              Welcome back to <span className="font-medium">Employee Manager</span>
+            </p>
+          </div>
+
         </div>
 
-        {/* Right: Logout */}
-        <button
-          onClick={logOutUser}
-          className="px-6 py-3 text-sm md:text-base font-semibold border-2 border-black rounded-xl hover:bg-black hover:text-white transition-all duration-300"
-        >
-          Log out
-        </button>
+        {/* Right Section */}
+        <div>
+          <button
+            onClick={logOutUser}
+            className="px-5 py-2 rounded-xl text-sm font-medium text-white bg-linear-to-r from-purple-600 to-blue-500 hover:opacity-90 shadow-sm transition"
+          >
+            Logout
+          </button>
+        </div>
 
       </div>
     </header>

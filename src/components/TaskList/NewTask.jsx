@@ -15,23 +15,51 @@ const NewTask = ({ data }) => {
   }
 
   return (
-    <div className="shrink-0 w-75 bg-white border rounded-2xl p-5 shadow-sm hover:shadow-md transition snap-start">
+    <div className="shrink-0 w-80 card p-5 snap-start hover:scale-[1.02] transition-all duration-300">
+
+      {/* Header */}
       <div className="flex justify-between items-center">
-        <span className="text-xs font-medium px-3 py-1 rounded-full border">{data.category}</span>
-        <span className="text-xs text-gray-400">{data.taskDate || new Date(data.createdAt).toLocaleDateString()}</span>
+        <span className="text-xs font-medium px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+          {data.category}
+        </span>
+
+        <span className="text-xs muted">
+          {data.taskDate || new Date(data.createdAt).toLocaleDateString()}
+        </span>
       </div>
 
-      <h2 className="mt-4 text-lg font-semibold text-gray-900">{data.title}</h2>
+      {/* Title */}
+      <h2 className="mt-4 text-lg font-semibold tracking-tight">
+        {data.title}
+      </h2>
 
-      <p className="text-sm text-gray-600 mt-2 line-clamp-3">{data.description}</p>
+      {/* Description */}
+      <p className="text-sm muted mt-2 line-clamp-3">
+        {data.description}
+      </p>
 
+      {/* Assigned */}
       {data.assignedTo && (
-        <p className="text-xs text-gray-500 mt-2">Assigned to: {data.assignedTo.name || data.assignedTo.email}</p>
+        <p className="text-xs muted mt-2">
+          Assigned to:{" "}
+          <span className="font-medium">
+            {data.assignedTo.name || data.assignedTo.email}
+          </span>
+        </p>
       )}
 
+      {/* Action */}
       <div className="mt-6">
-        <button onClick={accept} className="w-full border border-black text-black rounded-lg py-2 text-sm font-medium hover:bg-black hover:text-white transition">Accept Task</button>
+        <button
+          onClick={accept}
+          className="w-full py-2 rounded-lg text-sm font-medium
+          bg-linear-to-r from-purple-600 to-blue-500 text-white
+          hover:opacity-90 transition"
+        >
+          Accept Task
+        </button>
       </div>
+
     </div>
   )
 }

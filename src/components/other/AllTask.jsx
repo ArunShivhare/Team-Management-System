@@ -6,22 +6,22 @@ const AllTask = () => {
 
   if (!employees?.length) {
     return (
-      <div className="mt-10 text-center text-gray-400">
+      <div className="mt-8 text-center text-gray-500">
         No employee data available
       </div>
     )
   }
 
   return (
-    <div className="bg-white border rounded-2xl mt-10 shadow-sm overflow-hidden">
+    <div className="mt-8 rounded-2xl border bg-white shadow-sm overflow-hidden">
 
       {/* Header Row */}
-      <div className="grid grid-cols-5 gap-4 px-6 py-4 border-b bg-gray-50 text-sm font-semibold text-gray-600">
+      <div className="grid grid-cols-5 gap-4 px-6 py-4 border-b bg-linear-to-r from-purple-50 to-blue-50 text-sm font-semibold text-gray-600">
         <div>Employee</div>
-        <div>New</div>
-        <div>Active</div>
-        <div>Completed</div>
-        <div>Failed</div>
+        <div className="text-center">New</div>
+        <div className="text-center">Active</div>
+        <div className="text-center">Completed</div>
+        <div className="text-center">Failed</div>
       </div>
 
       {/* Data Rows */}
@@ -30,24 +30,37 @@ const AllTask = () => {
           key={emp.id}
           className="grid grid-cols-5 gap-4 px-6 py-4 border-b text-sm hover:bg-gray-50 transition"
         >
-          <div className="font-medium text-gray-900">
+          {/* Name */}
+          <div className="font-medium text-gray-800">
             {emp.name || emp.firstName}
           </div>
 
-          <div className="text-gray-600">
-            {emp.taskCounts.newTask}
+          {/* New */}
+          <div className="text-center">
+            <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-blue-100 text-blue-600 font-semibold">
+              {emp.taskCounts.newTask}
+            </span>
           </div>
 
-          <div className="text-gray-600">
-            {emp.taskCounts.active}
+          {/* Active */}
+          <div className="text-center">
+            <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-indigo-100 text-indigo-600 font-semibold">
+              {emp.taskCounts.active}
+            </span>
           </div>
 
-          <div className="text-gray-600">
-            {emp.taskCounts.completed}
+          {/* Completed */}
+          <div className="text-center">
+            <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-green-100 text-green-600 font-semibold">
+              {emp.taskCounts.completed}
+            </span>
           </div>
 
-          <div className="text-gray-600">
-            {emp.taskCounts.failed}
+          {/* Failed */}
+          <div className="text-center">
+            <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-red-100 text-red-600 font-semibold">
+              {emp.taskCounts.failed}
+            </span>
           </div>
         </div>
       ))}

@@ -25,26 +25,52 @@ const UserList = ({ refresh }) => {
     } catch (err) { alert(err.message || 'Delete failed') }
   }
 
-  if (!users.length) return <div className="mt-4 text-sm text-gray-500">No employees yet</div>
-
+ if (!users.length)
   return (
-    <div className="bg-white border rounded p-4">
-      <h3 className="font-semibold mb-2">Team Members</h3>
-      <ul className="space-y-2">
-        {users.map(u => (
-          <li key={u._id || u.id || u.email} className="flex items-center justify-between">
-            <div className="text-sm">
-              <div className="font-medium">{u.name}</div>
-              <div className="text-xs text-gray-500">{u.email}</div>
-            </div>
-            <div>
-              <button onClick={() => del(u._id || u.id)} className="px-3 py-1 text-sm border rounded text-red-600">Delete</button>
-            </div>
-          </li>
-        ))}
-      </ul>
+    <div className="mt-6 text-center text-sm text-gray-500 bg-white border rounded-xl p-6 shadow-sm">
+      No employees yet 👀
     </div>
   )
+
+return (
+  <div className="bg-white rounded-2xl border shadow-sm hover:shadow-md transition p-6">
+    
+    {/* Header */}
+    <div className="mb-5 text-center">
+      <h3 className="text-lg font-semibold bg-linear-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
+        Team Members 👥
+      </h3>
+      <p className="text-xs text-gray-500 mt-1">
+        Manage your team members
+      </p>
+    </div>
+
+    {/* List */}
+    <ul className="space-y-3">
+      {users.map(u => (
+        <li
+          key={u._id || u.id || u.email}
+          className="flex items-center justify-between bg-gray-50 hover:bg-gray-100 px-4 py-3 rounded-xl transition"
+        >
+          {/* User Info */}
+          <div>
+            <p className="text-sm font-medium">{u.name}</p>
+            <p className="text-xs text-gray-500">{u.email}</p>
+          </div>
+
+          {/* Delete Button */}
+          <button
+            onClick={() => del(u._id || u.id)}
+            className="text-sm px-4 py-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 transition"
+          >
+            Delete
+          </button>
+        </li>
+      ))}
+    </ul>
+  </div>
+)
+
 }
 
 export default UserList
