@@ -8,15 +8,19 @@ const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null)
     const [token, setToken] = useState(null)
     const [tasks, setTasks] = useState([])
+    const [employees, setEmployees] = useState([])
 
     useEffect(() => {
-        const stored = localStorage.getItem("auth")
-        if (stored) {
-            const parsed = JSON.parse(stored)
-            setUser(parsed.user)
-            setToken(parsed.token)
-            fetchTasks(parsed.token)
-        }
+        (async () => {
+            const stored = localStorage.getItem("auth")
+            if (stored) {
+                const parsed = JSON.parse(stored)
+                setUser(parsed.user)
+                setToken(parsed.token)
+                await fetchTasks(parsed.token)
+                await loadEmployees(parsed.token)
+            }
+        })()
     }, [])
 
     const authFetch = (path, opts = {}) => {
@@ -39,7 +43,8 @@ const AuthProvider = ({ children }) => {
         setUser(body.user)
         setToken(body.token)
         localStorage.setItem("auth", JSON.stringify({ user: body.user, token: body.token }))
-        fetchTasks(body.token)
+        await fetchTasks(body.token)
+        await loadEmployees(body.token)
         return body
     }
 
@@ -54,7 +59,8 @@ const AuthProvider = ({ children }) => {
         setUser(body.user)
         setToken(body.token)
         localStorage.setItem("auth", JSON.stringify({ user: body.user, token: body.token }))
-        fetchTasks(body.token)
+        await fetchTasks(body.token)
+        await loadEmployees(body.token)
         return body
     }
 
@@ -62,25 +68,30 @@ const AuthProvider = ({ children }) => {
         setUser(null)
         setToken(null)
         setTasks([])
+        setEmployees([])
         localStorage.removeItem("auth")
     }
 
     const fetchTasks = async (overrideToken) => {
         try {
             const t = overrideToken || token
-            if (!t) return
+            if (!t) return []
             const res = await fetch(`${API}/tasks`, { headers: { Authorization: `Bearer ${t}` } })
-            if (!res.ok) return
+            if (!res.ok) return []
             const data = await res.json()
             setTasks(data)
+            return data
         } catch (err) {
             console.error('fetchTasks error', err)
+            return []
         }
     }
 
-    const fetchUsers = async () => {
+    const fetchUsers = async (overrideToken) => {
         try {
-            const res = await fetch(`${API}/users`, { headers: { Authorization: `Bearer ${token}` } })
+            const t = overrideToken || token
+            if (!t) return []
+            const res = await fetch(`${API}/users`, { headers: { Authorization: `Bearer ${t}` } })
             if (!res.ok) return []
             const data = await res.json()
             return data
@@ -90,11 +101,42 @@ const AuthProvider = ({ children }) => {
         }
     }
 
+    const loadEmployees = async (overrideToken) => {
+        try {
+            const t = overrideToken || token
+            if (!t) return setEmployees([])
+            const users = await fetchUsers(t)
+            const tasksData = await fetchTasks(t)
+            const list = (users || []).map(u => {
+                const uid = (u._id || u.id || u.email).toString()
+                const counts = { newTask: 0, active: 0, completed: 0, failed: 0 }
+                ;(tasksData || []).forEach(task => {
+                    const assigned = task.assignedTo ? (task.assignedTo._id || task.assignedTo).toString() : null
+                    if (!assigned || assigned !== uid) return
+                    const s = task.status || 'new'
+                    if (s === 'new') counts.newTask++
+                    else if (s === 'accepted') counts.active++
+                    else if (s === 'completed') counts.completed++
+                    else if (s === 'failed') counts.failed++
+                })
+                return { id: uid, name: u.name, email: u.email, taskCounts: counts }
+            })
+            setEmployees(list)
+            return list
+        } catch (err) {
+            console.error('loadEmployees error', err)
+            setEmployees([])
+            return []
+        }
+    }
+
     const createTask = async ({ title, description, category, taskDate, assignedTo }) => {
         const res = await authFetch('/tasks', { method: 'POST', body: JSON.stringify({ title, description, category, taskDate, assignedTo }) })
         if (!res.ok) throw new Error('Create task failed')
         const body = await res.json()
         setTasks(s => [body, ...s])
+        // refresh aggregated employee counts
+        loadEmployees()
         return body
     }
 
@@ -103,11 +145,13 @@ const AuthProvider = ({ children }) => {
         if (!res.ok) throw new Error('Update task failed')
         const body = await res.json()
         setTasks(s => s.map(t => t._id === body._id ? body : t))
+        // refresh aggregated employee counts
+        loadEmployees()
         return body
     }
 
     return (
-        <AuthContext.Provider value={{ user, token, tasks, login, register, logout, createTask, updateTask, fetchTasks, fetchUsers }}>
+        <AuthContext.Provider value={{ user, token, tasks, employees, login, register, logout, createTask, updateTask, fetchTasks, fetchUsers, loadEmployees }}>
             {children}
         </AuthContext.Provider>
     )

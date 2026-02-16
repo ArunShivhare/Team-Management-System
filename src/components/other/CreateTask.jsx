@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react"
 import { AuthContext } from "../../context/AuthProvider"
 
 const CreateTask = () => {
-  const { createTask, fetchUsers } = useContext(AuthContext)
+  const { createTask, fetchUsers, token } = useContext(AuthContext)
 
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
@@ -13,11 +13,12 @@ const CreateTask = () => {
 
   useEffect(() => {
     let mounted = true
-    fetchUsers().then((res) => {
+    // provide token to avoid race where provider hasn't set it yet
+    fetchUsers(token).then((res) => {
       if (mounted) setUsers(res || [])
     })
     return () => { mounted = false }
-  }, [])
+  }, [token])
 
   const submitHandler = async (e) => {
     e.preventDefault()
@@ -60,6 +61,7 @@ const CreateTask = () => {
             <label className="text-sm text-gray-600">Assign To</label>
             <select value={assignedTo} onChange={(e) => setAssignedTo(e.target.value)} className="w-full mt-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black">
               <option value="">-- Select employee (optional) --</option>
+              {users.length === 0 && <option value="" disabled>No employees found</option>}
               {users.map(u => <option key={u._id || u.id || u.email} value={u._id || u.id || u.email}>{u.name} — {u.email}</option>)}
             </select>
           </div>

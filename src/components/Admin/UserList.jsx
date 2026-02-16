@@ -1,28 +1,27 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { AuthContext } from '../../context/AuthProvider'
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
-
 const UserList = ({ refresh }) => {
-  const { token } = useContext(AuthContext)
+  const { fetchUsers, loadEmployees, token } = useContext(AuthContext)
   const [users, setUsers] = useState([])
 
   useEffect(() => {
     let mounted = true
-    if (!token) return
-    fetch(`${API}/users`, { headers: { Authorization: `Bearer ${token}` } })
-      .then(r => r.ok ? r.json() : [])
-      .then(data => { if (mounted) setUsers(data || []) })
-      .catch(() => { if (mounted) setUsers([]) })
+    ;(async () => {
+      const data = await fetchUsers()
+      if (mounted) setUsers(data || [])
+    })()
     return () => { mounted = false }
-  }, [token, refresh])
+  }, [fetchUsers, refresh])
 
   const del = async (id) => {
     if (!confirm('Delete this employee?')) return
     try {
-      const res = await fetch(`${API}/users/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } })
+      const res = await fetch(`/api/users/${id}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` } })
       if (!res.ok) throw new Error('Delete failed')
       setUsers(u => u.filter(x => (x._id || x.id) !== id))
+      // refresh aggregated counts
+      if (loadEmployees) loadEmployees()
     } catch (err) { alert(err.message || 'Delete failed') }
   }
 
