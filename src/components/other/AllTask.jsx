@@ -31,7 +31,7 @@ const AllTask = () => {
           className="grid grid-cols-5 gap-4 px-6 py-4 border-b text-sm hover:bg-gray-50 transition"
         >
           <div className="font-medium text-gray-900">
-            {emp.firstName}
+            {emp.name || emp.firstName}
           </div>
 
           <div className="text-gray-600">

@@ -15,7 +15,15 @@ const EmployeeDashboard = ({ changeUser, data }) => {
 
         {/* Task Summary */}
         <section>
-          <TaskListNumbers data={data} />
+          <TaskListNumbers data={{
+            ...data,
+            taskCounts: {
+              newTask: data?.tasks?.filter(t => t.status === 'new').length || 0,
+              active: data?.tasks?.filter(t => t.status === 'accepted').length || 0,
+              completed: data?.tasks?.filter(t => t.status === 'completed').length || 0,
+              failed: data?.tasks?.filter(t => t.status === 'failed').length || 0,
+            }
+          }} />
         </section>
 
         {/* Task List */}

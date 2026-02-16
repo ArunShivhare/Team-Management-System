@@ -5,51 +5,26 @@ import AdminDashboard from "./components/Dashboard/AdminDashboard"
 import { AuthContext } from "./context/AuthProvider"
 
 const App = () => {
+  const { user, tasks, login, logout } = useContext(AuthContext)
   const [userRole, setUserRole] = useState(null)
   const [loggedInUserData, setLoggedInUserData] = useState(null)
-  const {employees} = useContext(AuthContext)
 
-  // Load session on refresh
   useEffect(() => {
-    const storedUser = localStorage.getItem("loggedInUser")
-
-    if (storedUser) {
-      const parsedUser = JSON.parse(storedUser)
-      setUserRole(parsedUser.role || null)
-      setLoggedInUserData(parsedUser.data || null)
+    if (user) {
+      setUserRole(user.role || 'employee')
+      setLoggedInUserData({ ...user, tasks })
+    } else {
+      setUserRole(null)
+      setLoggedInUserData(null)
     }
-  }, [])
+  }, [user, tasks])
 
-  const handleLogin = (email, password) => {
-    // Admin login
-    if (email === "admin@me.com" && password === "123") {
-      setUserRole("admin")
-      localStorage.setItem(
-        "loggedInUser",
-        JSON.stringify({ role: "admin" })
-      )
-      return
+  const handleLogin = async (email, password) => {
+    try {
+      await login(email, password)
+    } catch (err) {
+      alert(err.message || 'Login failed')
     }
-
-    // Employee login
-    if (employees?.length) {
-      const employee = employees.find(
-        (e) => e.email === email && e.password === password
-      )
-
-      if (employee) {
-        setUserRole("employee")
-        setLoggedInUserData(employee)
-        localStorage.setItem(
-          "loggedInUser",
-          JSON.stringify({ role: "employee", data: employee })
-        )
-        return
-      }
-    }
-
-    // Invalid credentials
-    alert("Invalid email or password")
   }
 
   return (
@@ -61,10 +36,7 @@ const App = () => {
       )}
 
       {userRole === "employee" && (
-        <EmployeeDashboard
-          changeUser={setUserRole}
-          data={loggedInUserData}
-        />
+        <EmployeeDashboard changeUser={setUserRole} data={loggedInUserData} />
       )}
     </>
   )

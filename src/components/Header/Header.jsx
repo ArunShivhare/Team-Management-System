@@ -1,12 +1,13 @@
-import React from "react"
+import React, { useContext } from "react"
+import { AuthContext } from "../../context/AuthProvider"
 
 const Header = ({ changeUser, data }) => {
-
-  const username = data?.firstName || "Admin"
+  const { logout } = useContext(AuthContext)
+  const username = data?.name || data?.firstName || "User"
 
   const logOutUser = () => {
-    localStorage.removeItem("loggedInUser")
-    changeUser(null)
+    logout()
+    if (changeUser) changeUser(null)
   }
 
   return (
