@@ -1,24 +1,50 @@
 import React, { useContext } from "react"
 import { AuthContext } from "../../context/AuthProvider"
 
-const AcceptTask = ({ data }) => {
-  const { updateTask } = useContext(AuthContext)
+function resolveAssigned(a, employees = []) {
+  if (!a) return 'Unassigned'
+  console.log('[AcceptTask] assignedTo:', a, 'is object?', typeof a === 'object', 'has name?', a?.name)
+  
+  // If already populated from backend with name/email
+  if (typeof a === 'object' && a.name) return a.name
+  if (typeof a === 'object' && a.email) return a.email
+  
+  // Try to find in employees list
+  if (typeof a === 'object' && a._id) {
+    const found = employees.find(e => e.id === String(a._id))
+    if (found?.name) return found.name
+  }
+  
+  const s = String(a)
+  const found = employees.find(e => e.id === s || e.id?.toString() === s)
+  if (found?.name) return found.name
+  
+  return s
+}
+
+const AcceptTask = ({ data, onClick }) => {
+  const { updateTask, employees = [] } = useContext(AuthContext)
   if (!data) return null
 
-  const markCompleted = async () => {
+  const markCompleted = async (e) => {
+    if (e && e.stopPropagation) e.stopPropagation()
     try {
       await updateTask(data._id, { status: 'completed' })
     } catch (err) { console.error(err); alert('Could not mark completed') }
   }
 
-  const markFailed = async () => {
+  const markFailed = async (e) => {
+    if (e && e.stopPropagation) e.stopPropagation()
     try {
       await updateTask(data._id, { status: 'failed' })
     } catch (err) { console.error(err); alert('Could not mark failed') }
   }
 
   return (
-    <div className="shrink-0 w-80 card p-5 snap-start hover:scale-[1.02] transition-all duration-300">
+    <div
+  onClick={onClick}
+  className="cursor-pointer shrink-0 w-75 bg-white border rounded-2xl p-5 shadow-sm hover:shadow-md transition"
+>
 
       {/* Header */}
       <div className="flex justify-between items-center">
@@ -44,7 +70,7 @@ const AcceptTask = ({ data }) => {
       {/* Assigned */}
       {data.assignedTo && (
         <p className="text-xs muted mt-2">
-          Assigned to: <span className="font-medium">{data.assignedTo.name || data.assignedTo.email}</span>
+          Assigned to: <span className="font-medium">{resolveAssigned(data.assignedTo, employees)}</span>
         </p>
       )}
 
@@ -52,7 +78,7 @@ const AcceptTask = ({ data }) => {
       <div className="flex gap-3 mt-6">
 
         <button
-          onClick={markCompleted}
+          onClick={(e) => markCompleted(e)}
           className="flex-1 py-2 rounded-lg text-xs font-medium 
           border border-green-600 text-green-600
           hover:bg-green-600 hover:text-white
@@ -62,7 +88,7 @@ const AcceptTask = ({ data }) => {
         </button>
 
         <button
-          onClick={markFailed}
+          onClick={(e) => markFailed(e)}
           className="flex-1 py-2 rounded-lg text-xs font-medium
           border border-red-600 text-red-600
           hover:bg-red-600 hover:text-white

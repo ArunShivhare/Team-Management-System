@@ -1,11 +1,33 @@
 import React, { useContext } from "react"
 import { AuthContext } from "../../context/AuthProvider"
 
-const NewTask = ({ data }) => {
-  const { updateTask } = useContext(AuthContext)
+function resolveAssigned(a, employees = []) {
+  if (!a) return 'Unassigned'
+  console.log('[NewTask] assignedTo:', a, 'is object?', typeof a === 'object', 'has name?', a?.name)
+  
+  // If already populated from backend with name/email
+  if (typeof a === 'object' && a.name) return a.name
+  if (typeof a === 'object' && a.email) return a.email
+  
+  // Try to find in employees list
+  if (typeof a === 'object' && a._id) {
+    const found = employees.find(e => e.id === String(a._id))
+    if (found?.name) return found.name
+  }
+  
+  const s = String(a)
+  const found = employees.find(e => e.id === s || e.id?.toString() === s)
+  if (found?.name) return found.name
+  
+  return s
+}
+
+const NewTask = ({ data, onClick }) => {
+  const { updateTask, employees = [] } = useContext(AuthContext)
   if (!data) return null
 
-  const accept = async () => {
+  const accept = async (e) => {
+    if (e && e.stopPropagation) e.stopPropagation()
     try {
       await updateTask(data._id, { status: 'accepted' })
     } catch (err) {
@@ -15,7 +37,10 @@ const NewTask = ({ data }) => {
   }
 
   return (
-    <div className="shrink-0 w-80 card p-5 snap-start hover:scale-[1.02] transition-all duration-300">
+    <div
+      onClick={onClick}
+      className="cursor-pointer shrink-0 w-75 bg-white border rounded-2xl p-5 shadow-sm hover:shadow-md transition"
+    >
 
       {/* Header */}
       <div className="flex justify-between items-center">
@@ -41,17 +66,15 @@ const NewTask = ({ data }) => {
       {/* Assigned */}
       {data.assignedTo && (
         <p className="text-xs muted mt-2">
-          Assigned to:{" "}
-          <span className="font-medium">
-            {data.assignedTo.name || data.assignedTo.email}
-          </span>
+          Assigned to: {" "}
+          <span className="font-medium">{resolveAssigned(data.assignedTo, employees)}</span>
         </p>
       )}
 
       {/* Action */}
       <div className="mt-6">
         <button
-          onClick={accept}
+          onClick={(e) => accept(e)}
           className="w-full py-2 rounded-lg text-sm font-medium
           bg-linear-to-r from-purple-600 to-blue-500 text-white
           hover:opacity-90 transition"

@@ -5,6 +5,8 @@ exports.createTask = async (req, res) => {
     const { title, description, category, taskDate, assignedTo } = req.body;
     const task = new Task({ title, description, category, taskDate, assignedTo, createdBy: req.user.id });
     await task.save();
+    // populate assignedTo with name and email
+    await task.populate('assignedTo', 'name email');
     res.status(201).json(task);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -18,8 +20,8 @@ exports.getTasks = async (req, res) => {
       // admin sees tasks they created
       tasks = await Task.find({ createdBy: req.user.id }).sort({ createdAt: -1 }).populate('assignedTo', 'name email');
     } else {
-      // employee sees tasks assigned to them
-      tasks = await Task.find({ assignedTo: req.user.id }).sort({ createdAt: -1 }).populate('createdBy', 'name email');
+      // employee sees tasks assigned to them - also populate assignedTo for complete data
+      tasks = await Task.find({ assignedTo: req.user.id }).sort({ createdAt: -1 }).populate('createdBy', 'name email').populate('assignedTo', 'name email');
     }
     res.json(tasks);
   } catch (err) {
@@ -41,6 +43,8 @@ exports.updateTask = async (req, res) => {
 
     Object.assign(task, req.body);
     await task.save();
+    // populate assignedTo with user details before responding
+    await task.populate('assignedTo', 'name email');
     res.json(task);
   } catch (err) {
     res.status(500).json({ message: err.message });

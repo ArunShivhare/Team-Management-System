@@ -16,6 +16,7 @@ html, body, #root {
 }
 
 body {
+  
   background-color: var(--bg);
   color: var(--primary);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
@@ -85,4 +86,26 @@ select:focus {
 /* Smooth animations globally */
 * {
   scroll-behavior: smooth;
+}
+
+/* Hide vertical page scrollbar but keep scrolling (cross-browser) */
+body {
+  -ms-overflow-style: none; /* IE 10+ */
+  scrollbar-width: none; /* Firefox */
+}
+
+body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+/* Also hide scrollbar on html and root to cover cases where scrollbar is on the root element */
+html, body, #root {
+  -ms-overflow-style: none; /* IE 10+ */
+  scrollbar-width: none; /* Firefox */
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+#root::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }

@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useContext } from "react"
 import Header from "../Header/Header"
 import CreateTask from "../other/CreateTask"
 import AllTask from "../other/AllTask"
@@ -7,14 +7,17 @@ import UserList from "../Admin/UserList"
 import Footer from "../Footer/Footer"
 import { useState } from "react"
 
+import { AuthContext } from "../../context/AuthProvider"
+
 const AdminDashboard = ({ changeUser }) => {
   const [refresh, setRefresh] = useState(false)
+  const { user } = useContext(AuthContext)
 
   return (
   <div className="min-h-screen bg-linear-to-br from-purple-50 via-white to-blue-50">
 
     {/* Header */}
-    <Header changeUser={changeUser} className="sticky top-0 z-50 backdrop-blur bg-white/70 border-b border-gray-200" />
+    <Header data={user} changeUser={changeUser} className="sticky top-0 z-50 backdrop-blur bg-white/70 border-b border-gray-200" />
 
     {/* Content */}
     <main className="max-w-7xl mx-auto px-4 py-10 space-y-10">

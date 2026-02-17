@@ -1,10 +1,37 @@
-import React from "react"
+import React, { useContext } from "react"
+import { AuthContext } from "../../context/AuthProvider"
 
-const FailedTask = ({ data }) => {
+function resolveAssigned(a, employees = []) {
+  if (!a) return 'Unassigned'
+  console.log('[FailedTask] assignedTo:', a, 'is object?', typeof a === 'object', 'has name?', a?.name)
+  
+  // If already populated from backend with name/email
+  if (typeof a === 'object' && a.name) return a.name
+  if (typeof a === 'object' && a.email) return a.email
+  
+  // Try to find in employees list
+  if (typeof a === 'object' && a._id) {
+    const found = employees.find(e => e.id === String(a._id))
+    if (found?.name) return found.name
+  }
+  
+  const s = String(a)
+  const found = employees.find(e => e.id === s || e.id?.toString() === s)
+  if (found?.name) return found.name
+  
+  return s
+}
+
+const FailedTask = ({ data, onClick }) => {
   if (!data) return null
+  const { employees = [] } = useContext(AuthContext)
 
   return (
-    <div className="shrink-0 w-80 card p-5 snap-start hover:scale-[1.02] transition-all duration-300">
+    <div
+  onClick={onClick}
+  className="cursor-pointer shrink-0 w-75 bg-white border rounded-2xl p-5 shadow-sm hover:shadow-md transition"
+>
+
 
       {/* Header */}
       <div className="flex justify-between items-center">
@@ -31,15 +58,14 @@ const FailedTask = ({ data }) => {
       {data.assignedTo && (
         <p className="text-xs muted mt-2">
           Assigned to:{" "}
-          <span className="font-medium">
-            {data.assignedTo.name || data.assignedTo.email}
-          </span>
+          <span className="font-medium">{resolveAssigned(data.assignedTo, employees)}</span>
         </p>
       )}
 
       {/* Status */}
       <div className="mt-6">
         <button
+          onClick={(e) => e.stopPropagation()}
           disabled
           className="w-full py-2 rounded-lg text-sm font-medium
           bg-red-50 text-red-700 border border-red-200

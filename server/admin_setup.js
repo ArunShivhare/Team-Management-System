@@ -11,7 +11,7 @@ async function req(path, opts = {}) {
 async function run() {
   console.log('API base:', API);
 
-  const admin = { name: 'Admin', email: 'admin@me.com', password: '123', role: 'admin' };
+  const admin = { name: 'Arun', email: 'admin@me.com', password: '123', role: 'admin' };
 
   console.log('\nRegistering admin...');
   const reg = await req('/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(admin) });
