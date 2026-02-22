@@ -18,10 +18,11 @@ const Header = ({ changeUser, data }) => {
         <div className="flex items-center gap-4">
 
           {/* Logo */}
-          <div className="p-3 rounded-xl bg-linear-to-br from-purple-600 to-blue-500 shadow-md">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+          <div className="p-3 rounded-xl bg-linear-to-br from-purple-200 to-blue-300 shadow-md">
+            {/* <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
               <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
-            </svg>
+            </svg> */}
+            <img width="40" height="40" viewBox="0 0 24 24" fill="white" src="/favicon.png" alt="" />
           </div>
 
           {/* Greeting */}
@@ -30,7 +31,7 @@ const Header = ({ changeUser, data }) => {
               Hello, <span className="bg-linear-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">{username}</span>
             </h1>
             <p className="text-sm text-gray-500 mt-1">
-              Welcome back to <span className="font-medium">Employee Manager</span>
+              Welcome back to <span className="font-medium">Nexus</span>
             </p>
           </div>
 
