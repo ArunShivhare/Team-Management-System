@@ -1,0 +1,16 @@
+.env
+.env.example
+node_modules/
+dist/
+coverage/
+logs/
+*.log
+*.tsbuildinfo
+.DS_Store
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+package-lock.json
+yarn.lock   
+lerna-debug.log
